@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from '../layouts/AdminLayout';
 import { getDashboardStats } from '../api/api';
 import {
-  Package, FileText, DollarSign, AlertTriangle,
+  Package, FileText, Coins, AlertTriangle,
   TrendingUp, ArrowUpRight, Layers, Users
 } from 'lucide-react';
 import Spinner from '../components/Spinner';
@@ -60,7 +60,7 @@ const Dashboard = () => {
                 <StatCard label="Factures" value={stats?.totalInvoices} icon={FileText} color="text-sky-400" sub="Historique des ventes" trend={8} />
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
-                <StatCard label="Chiffre d’affaires" value={stats?.totalRevenue != null ? `${Number(stats.totalRevenue).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} MAD` : '—'} icon={DollarSign} color="text-violet-400" sub="Cumul des ventes" trend={21} />
+                <StatCard label="Chiffre d’affaires" value={stats?.totalRevenue != null ? `${Number(stats.totalRevenue).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} MAD` : '—'} icon={Coins} color="text-violet-400" sub="Cumul des ventes" trend={21} />
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
                 <StatCard label="Alertes de stock faible" value={stats?.lowStockCount} icon={AlertTriangle} color="text-amber-400" sub="Produits à réapprovisionner" />

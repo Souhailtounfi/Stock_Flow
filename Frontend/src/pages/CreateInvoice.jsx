@@ -21,10 +21,12 @@ const CreateInvoice = () => {
     Promise.all([
       getCustomers({ pageSize: 200 }),
       getProducts({ pageSize: 200 }),
-    ]).then(([cr, pr]) => {
-      setCustomers(Array.isArray(cr.data) ? cr.data : cr.data.items ?? []);
-      setProducts(Array.isArray(pr.data) ? pr.data : pr.data.products ?? []);
-    }).catch(() => showToast('Échec du chargement des données.', 'error'))
+    ])
+      .then(([cr, pr]) => {
+        setCustomers(Array.isArray(cr.data) ? cr.data : cr.data.items ?? []);
+        setProducts(Array.isArray(pr.data) ? pr.data : pr.data.products ?? []);
+      })
+      .catch(() => showToast('Échec du chargement des données.', 'error'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -49,6 +51,7 @@ const CreateInvoice = () => {
   };
 
   const subtotal = items.reduce((sum, item) => sum + (Number(item.unitPrice) * Number(item.quantity || 0)), 0);
+  const formatCurrency = (value) => `${Number(value || 0).toFixed(2)} MAD`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,7 +155,7 @@ const CreateInvoice = () => {
               <thead className="border-b border-slate-100/10">
                 <tr>
                   <th className="text-left pb-3 pr-3 text-slate-500 font-medium">Produit</th>
-                  <th className="text-right pb-3 px-3 text-slate-500 font-medium w-24">Qté</th>
+                  <th className="text-right pb-3 px-3 text-slate-500 font-medium w-24">Quantité</th>
                   <th className="text-right pb-3 px-3 text-slate-500 font-medium w-32">Prix unitaire</th>
                   <th className="text-right pb-3 pl-3 text-slate-500 font-medium w-32">Total</th>
                   <th className="w-10"></th>
@@ -180,7 +183,7 @@ const CreateInvoice = () => {
                         className="w-full bg-white border border-emerald-100 focus:border-emerald-400 rounded-xl py-2 px-3 text-base text-slate-700 outline-none transition-all text-right" />
                     </td>
                     <td className="py-2.5 pl-3 text-right font-semibold text-emerald-500">
-                      ${(Number(item.unitPrice) * Number(item.quantity || 0)).toFixed(2)}
+                      {formatCurrency(Number(item.unitPrice) * Number(item.quantity || 0))}
                     </td>
                     <td className="py-2.5 pl-2">
                       {items.length > 1 && (
@@ -205,11 +208,11 @@ const CreateInvoice = () => {
               <div className="space-y-2 text-sm min-w-[200px]">
                 <div className="flex justify-between text-slate-500">
                   <span>Sous-total</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-slate-800 text-lg border-t border-slate-100/10 pt-2">
                   <span>Total</span>
-                  <span className="text-emerald-500">${subtotal.toFixed(2)}</span>
+                  <span className="text-emerald-500">{formatCurrency(subtotal)}</span>
                 </div>
               </div>
             </div>

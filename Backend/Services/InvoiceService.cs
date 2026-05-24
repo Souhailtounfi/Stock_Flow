@@ -59,6 +59,7 @@ namespace Backend.Services
                 CustomerId = dto.CustomerId,
                 UserId = userId,
                 IssueDate = DateTime.UtcNow,
+                Status = string.IsNullOrWhiteSpace(dto.Status) ? "Pending" : dto.Status,
                 TaxRate = dto.TaxRate
             };
 
@@ -116,6 +117,24 @@ namespace Backend.Services
 
             var savedInvoice = await _invoiceRepository.GetByIdWithItemsAsync(invoice.Id);
             return _mapper.Map<InvoiceResponseDto>(savedInvoice!);
+        }
+
+        public async Task<InvoiceResponseDto?> UpdateInvoiceStatusAsync(int id, string status)
+        {
+            var normalizedStatus = status?.Trim();
+            if (string.IsNullOrWhiteSpace(normalizedStatus))
+                throw new ArgumentException("Status is required.");
+
+            var invoice = await _invoiceRepository.GetByIdAsync(id);
+            if (invoice == null)
+                return null;
+
+            invoice.Status = normalizedStatus;
+            _invoiceRepository.Update(invoice);
+            await _invoiceRepository.SaveChangesAsync();
+
+            var updatedInvoice = await _invoiceRepository.GetByIdWithItemsAsync(id);
+            return updatedInvoice == null ? null : _mapper.Map<InvoiceResponseDto>(updatedInvoice);
         }
     }
 }

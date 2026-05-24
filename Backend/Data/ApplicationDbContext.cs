@@ -83,6 +83,11 @@ namespace Backend.Data
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<Invoice>()
+                .Property(i => i.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
+
+            modelBuilder.Entity<Invoice>()
                 .Property(i => i.TaxRate)
                 .HasPrecision(5, 4); // E.g., 0.2000
 

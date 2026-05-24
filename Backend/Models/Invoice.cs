@@ -8,6 +8,7 @@ namespace Backend.Models
         public int Id { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
         public DateTime IssueDate { get; set; } = DateTime.UtcNow;
+        public string Status { get; set; } = "Pending";
         
         public int CustomerId { get; set; }
         public Customer Customer { get; set; } = null!;

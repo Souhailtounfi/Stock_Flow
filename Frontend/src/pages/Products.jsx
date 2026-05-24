@@ -130,7 +130,7 @@ const Products = () => {
                         <td className="px-5 py-4">
                           <span className="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 font-semibold">{p.categoryName || '—'}</span>
                         </td>
-                        <td className="px-5 py-4 font-semibold text-emerald-500">${Number(p.price).toFixed(2)}</td>
+                        <td className="px-5 py-4 font-semibold text-emerald-500">{`${Number(p.price).toFixed(2)} MAD`}</td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2">
                             <span className={`text-xs px-3 py-1 rounded-full border font-semibold ${stockBadge(p.quantityInStock, p.minStockLevel)}`}>{p.quantityInStock}</span>

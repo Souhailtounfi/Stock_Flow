@@ -9,5 +9,6 @@ namespace Backend.Services
         Task<(IEnumerable<InvoiceResponseDto> Invoices, int TotalCount)> GetPagedInvoicesAsync(int page, int pageSize);
         Task<InvoiceResponseDto?> GetInvoiceByIdAsync(int id);
         Task<InvoiceResponseDto> CreateInvoiceAsync(InvoiceCreateDto dto, int userId);
+        Task<InvoiceResponseDto?> UpdateInvoiceStatusAsync(int id, string status);
     }
 }

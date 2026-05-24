@@ -44,5 +44,15 @@ namespace Backend.Controllers
             var invoice = await _invoiceService.CreateInvoiceAsync(dto, userId);
             return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, invoice);
         }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] InvoiceStatusUpdateDto dto)
+        {
+            var updatedInvoice = await _invoiceService.UpdateInvoiceStatusAsync(id, dto.Status);
+            if (updatedInvoice == null)
+                return NotFound(new { message = $"Invoice with ID {id} not found." });
+
+            return Ok(updatedInvoice);
+        }
     }
 }

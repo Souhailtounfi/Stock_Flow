@@ -6,7 +6,7 @@ import Pagination from '../components/Pagination';
 import { getInvoices, updateInvoiceStatus, deleteInvoice } from '../api/api';
 import { useToast } from '../context/ToastContext';
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Search, Eye, Trash2, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plus, FileText, Search, Eye, Trash2, CheckCircle, XCircle, Clock, ReceiptText, CalendarDays, UserRound, BadgePercent, Package, ShoppingCart, CircleDollarSign } from 'lucide-react';
 
 const STATUS_STYLES = {
   Pending: 'bg-amber-100 text-amber-600 border-amber-200',
@@ -19,6 +19,10 @@ const STATUS_ICONS = {
   Paid: CheckCircle,
   Cancelled: XCircle,
 };
+
+const statusLabel = (status) => status === 'Pending' ? 'En attente' : status === 'Paid' ? 'Payée' : 'Annulée';
+
+const formatCurrency = (value) => `${Number(value || 0).toFixed(2)} MAD`;
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -115,10 +119,10 @@ const Invoices = () => {
                     const StatusIcon = STATUS_ICONS[inv.status] || Clock;
                     return (
                       <tr key={inv.id} className="hover:bg-emerald-50/60 transition-colors">
-                        <td className="px-5 py-4 font-mono text-slate-700 font-semibold">#{String(inv.id).padStart(5, '0')}</td>
+                        <td className="px-5 py-4 font-mono text-slate-700 font-semibold">#{String(inv.id)}</td>
                         <td className="px-5 py-4 text-slate-700">{inv.customerName || '—'}</td>
                         <td className="px-5 py-4 text-slate-500">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
-                        <td className="px-5 py-4 font-semibold text-emerald-500">${Number(inv.totalAmount).toFixed(2)}</td>
+                        <td className="px-5 py-4 font-semibold text-emerald-500">{`${Number(inv.totalAmount).toFixed(2)} MAD`}</td>
                         <td className="px-5 py-4">
                           <span className={`inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border font-semibold ${STATUS_STYLES[inv.status] || STATUS_STYLES.Pending}`}>
                             <StatusIcon className="h-3 w-3" />{inv.status === 'Pending' ? 'En attente' : inv.status === 'Paid' ? 'Payée' : 'Annulée'}
@@ -147,49 +151,122 @@ const Invoices = () => {
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
-      <Modal isOpen={viewModal} onClose={() => setViewModal(false)} title={`Facture #${String(selected?.id ?? '').padStart(5, '0')}`}>
+      <Modal isOpen={viewModal} onClose={() => setViewModal(false)} title={`Facture #${String(selected?.id ?? '')}`}>
         {selected && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><p className="text-slate-500 text-xs uppercase font-semibold">Client</p><p className="text-slate-700 font-medium">{selected.customerName || '—'}</p></div>
-              <div><p className="text-slate-500 text-xs uppercase font-semibold">Date</p><p className="text-slate-700 font-medium">{new Date(selected.invoiceDate).toLocaleDateString()}</p></div>
-              <div><p className="text-slate-500 text-xs uppercase font-semibold">Statut</p>
-                <span className={`inline-flex text-xs px-3 py-1 rounded-full border font-semibold ${STATUS_STYLES[selected.status]}`}>{selected.status === 'Pending' ? 'En attente' : selected.status === 'Paid' ? 'Payée' : 'Annulée'}</span>
+          <div className="space-y-5">
+            <div className="rounded-[24px] bg-gradient-to-br from-emerald-500 to-emerald-600 p-[1px]">
+              <div className="rounded-[23px] bg-slate-950/95 p-4 sm:p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-emerald-200">Aperçu</p>
+                    <h4 className="text-xl font-bold text-white mt-2">{selected.customerName || 'Client non renseigné'}</h4>
+                    <p className="text-sm text-slate-300 mt-1">Document prêt à être vérifié et suivi.</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/10 px-4 py-3 text-right">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-100">Statut</p>
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-white">
+                      <span className={`inline-flex h-2.5 w-2.5 rounded-full ${selected.status === 'Paid' ? 'bg-emerald-300' : selected.status === 'Cancelled' ? 'bg-rose-300' : 'bg-amber-300'}`} />
+                      {statusLabel(selected.status)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-2xl bg-white/5 border border-white/10 px-3 py-2">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-slate-300">Date</p>
+                    <p className="mt-1 font-semibold text-white flex items-center gap-2"><CalendarDays className="h-4 w-4 text-emerald-300" /> {new Date(selected.invoiceDate).toLocaleDateString('fr-FR')}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/5 border border-white/10 px-3 py-2">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-slate-300">Total</p>
+                    <p className="mt-1 font-semibold text-emerald-300 flex items-center gap-2"><CircleDollarSign className="h-4 w-4" /> {formatCurrency(selected.totalAmount)}</p>
+                  </div>
+                </div>
               </div>
-              <div><p className="text-slate-500 text-xs uppercase font-semibold">Total</p><p className="text-emerald-500 font-bold text-lg">${Number(selected.totalAmount).toFixed(2)}</p></div>
             </div>
-            {selected.notes && <div><p className="text-slate-500 text-xs uppercase font-semibold mb-1">Notes</p><p className="text-slate-600 text-sm">{selected.notes}</p></div>}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="rounded-2xl bg-emerald-50 px-4 py-3">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-700">Client</p>
+                <p className="mt-2 font-semibold text-slate-800 flex items-center gap-2"><UserRound className="h-4 w-4 text-emerald-500" /> {selected.customerName || '—'}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Numéro</p>
+                <p className="mt-2 font-semibold text-slate-800 flex items-center gap-2"><ReceiptText className="h-4 w-4 text-emerald-500" /> #{String(selected.id)}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Taxe</p>
+                <p className="mt-2 font-semibold text-slate-800 flex items-center gap-2"><BadgePercent className="h-4 w-4 text-emerald-500" /> {`${Number(selected.taxRate * 100).toFixed(2)} %`}</p>
+              </div>
+            </div>
+
+            {selected.notes && (
+              <div className="rounded-2xl border border-slate-100/10 bg-slate-50 px-4 py-3">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Notes</p>
+                <p className="mt-2 text-sm text-slate-700 leading-6">{selected.notes}</p>
+              </div>
+            )}
+
             {selected.items?.length > 0 && (
               <div>
-                <p className="text-slate-500 text-xs uppercase font-semibold mb-2">Lignes de facture</p>
-                <div className="rounded-xl overflow-hidden border border-slate-100/10">
-                  <table className="w-full text-sm">
-                    <thead className="bg-emerald-50"><tr>
-                      <th className="text-left px-4 py-2.5 text-slate-500 font-medium">Produit</th>
-                      <th className="text-right px-4 py-2.5 text-slate-500 font-medium">Qté</th>
-                      <th className="text-right px-4 py-2.5 text-slate-500 font-medium">Prix</th>
-                      <th className="text-right px-4 py-2.5 text-slate-500 font-medium">Total</th>
-                    </tr></thead>
-                    <tbody className="divide-y divide-slate-100/10">
-                      {selected.items.map((item, i) => (
-                        <tr key={i}>
-                          <td className="px-4 py-2.5 text-slate-700">{item.productName}</td>
-                          <td className="px-4 py-2.5 text-right text-slate-500">{item.quantity}</td>
-                          <td className="px-4 py-2.5 text-right text-slate-500">${Number(item.unitPrice).toFixed(2)}</td>
-                          <td className="px-4 py-2.5 text-right text-emerald-500 font-semibold">${Number(item.totalPrice).toFixed(2)}</td>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-slate-100">Lignes de facture</p>
+                  <span className="inline-flex items-center gap-2 text-xs text-slate-500"><ShoppingCart className="h-3.5 w-3.5 text-emerald-400" />{selected.items.length} article(s)</span>
+                </div>
+                <div className="rounded-[24px] border border-slate-100/10 overflow-hidden bg-white/90">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="text-left px-4 py-3 text-slate-500 font-semibold">Produit</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Qté</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Prix</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Total</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100/10">
+                        {selected.items.map((item, index) => (
+                          <tr key={index} className="hover:bg-emerald-50/40 transition-colors">
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <Package className="h-4 w-4 text-emerald-400" />
+                                <div>
+                                  <p className="font-semibold text-slate-800">{item.productName}</p>
+                                  <p className="text-xs text-slate-500">Produit #{item.productId}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right text-slate-700">{item.quantity}</td>
+                            <td className="px-4 py-3 text-right text-slate-700">{formatCurrency(item.unitPrice)}</td>
+                            <td className="px-4 py-3 text-right font-semibold text-emerald-600">{formatCurrency(item.totalPrice)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
+
+            <div className="rounded-[24px] bg-slate-50 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-500">Sous-total</span>
+                <span className="font-semibold text-slate-800">{formatCurrency(Number(selected.subTotal ?? 0))}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm mt-2">
+                <span className="text-slate-500">Taxe</span>
+                <span className="font-semibold text-slate-800">{formatCurrency(Number(selected.taxAmount ?? 0))}</span>
+              </div>
+              <div className="flex items-center justify-between border-t border-slate-200 pt-3 mt-3 text-base font-bold">
+                <span className="text-slate-900">Total payé</span>
+                <span className="text-emerald-600">{formatCurrency(Number(selected.totalAmount ?? 0))}</span>
+              </div>
+            </div>
           </div>
         )}
       </Modal>
 
       <Modal isOpen={deleteModal} onClose={() => setDeleteModal(false)} title="Supprimer la facture">
-        <p className="text-slate-500 mb-6">Supprimer la facture <span className="font-bold text-slate-700">#{String(selected?.id ?? '').padStart(5, '0')}</span> ? Cette action est irréversible.</p>
+        <p className="text-slate-500 mb-6">Supprimer la facture <span className="font-bold text-slate-700">#{String(selected?.id ?? '')}</span> ? Cette action est irréversible.</p>
         <div className="flex flex-col sm:flex-row gap-3">
           <button onClick={() => setDeleteModal(false)} className="w-full sm:w-auto sm:flex-1 py-2.5 rounded-xl border border-emerald-200 text-emerald-600 text-base font-medium hover:bg-emerald-100 transition-all">Annuler</button>
           <button onClick={handleDelete} disabled={saving} className="w-full sm:w-auto sm:flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-base font-semibold transition-all disabled:opacity-50">{saving ? 'Suppression...' : 'Supprimer'}</button>
