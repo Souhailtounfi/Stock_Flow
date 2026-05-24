@@ -17,6 +17,13 @@ const COLORS = {
   info: 'border-sky-500/30 bg-sky-500/10 text-sky-400',
 };
 
+const LABELS = {
+  success: 'Succès',
+  error: 'Erreur',
+  warning: 'Attention',
+  info: 'Info',
+};
+
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
@@ -33,22 +40,35 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 w-80">
-        {toasts.map((toast) => {
-          const Icon = ICONS[toast.type] || Info;
-          return (
-            <div
-              key={toast.id}
-              className={`flex items-start gap-3 p-4 rounded-xl border glass shadow-xl ${COLORS[toast.type]} animate-slide-in`}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0 mt-0.5" />
-              <p className="text-sm flex-1 font-medium">{toast.message}</p>
-              <button onClick={() => removeToast(toast.id)} className="opacity-60 hover:opacity-100 transition-opacity">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          );
-        })}
+      <div className="toast-wrapper">
+        <div className="toast-stack">
+          {toasts.map((toast) => {
+            const Icon = ICONS[toast.type] || Info;
+            return (
+              <div
+                key={toast.id}
+                className={`toast-card glass ${COLORS[toast.type]} animate-slide-in`}
+              >
+                <div className="toast-icon-wrap">
+                  <Icon className="toast-icon" />
+                </div>
+                <div className="toast-content">
+                  <div className="toast-header">
+                    <p className="toast-label">{LABELS[toast.type] || 'Info'}</p>
+                    <button
+                      onClick={() => removeToast(toast.id)}
+                      className="toast-close"
+                      aria-label="Fermer la notification"
+                    >
+                      <X className="toast-close-icon" />
+                    </button>
+                  </div>
+                  <p className="toast-message">{toast.message}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </ToastContext.Provider>
   );
