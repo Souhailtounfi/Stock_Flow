@@ -40,7 +40,7 @@ namespace Backend.DTOs
 
     public class StockAdjustDto
     {
-        public int Quantity { get; set; } // Can be positive or negative
+        public int Quantity { get; set; } // Peut être positif ou négatif
         public string Reason { get; set; } = string.Empty;
     }
 }

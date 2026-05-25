@@ -8,7 +8,7 @@ namespace Backend.Mappings
     {
         public MappingProfile()
         {
-            // User mappings
+            // Mappings utilisateurs
             CreateMap<RegisterRequest, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.Role, opt => opt.Ignore());
@@ -21,30 +21,30 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.Token, opt => opt.Ignore())
                 .ForMember(dest => dest.Expiration, opt => opt.Ignore());
 
-            // Product mappings
+            // Mappings produits
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ProductUpdateDto, Product>();
             CreateMap<Product, ProductResponseDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty));
 
-            // Category mappings
+            // Mappings catégories
             CreateMap<CategoryCreateDto, Category>();
             CreateMap<Category, CategoryResponseDto>();
 
-            // Supplier mappings
+            // Mappings fournisseurs
             CreateMap<SupplierCreateDto, Supplier>();
             CreateMap<Supplier, SupplierResponseDto>();
 
-            // Customer mappings
+            // Mappings clients
             CreateMap<CustomerCreateDto, Customer>();
             CreateMap<Customer, CustomerResponseDto>();
 
-            // Invoice Item mappings
+            // Mappings des lignes de facture
             CreateMap<InvoiceItem, InvoiceItemResponseDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                 .ForMember(dest => dest.ProductBarcode, opt => opt.MapFrom(src => src.Product != null ? src.Product.Barcode : string.Empty));
 
-            // Invoice mappings
+            // Mappings factures
             CreateMap<Invoice, InvoiceResponseDto>()
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : string.Empty))
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Email : string.Empty))
@@ -52,7 +52,7 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Address : string.Empty))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.Username : string.Empty));
 
-            // Stock Movement mappings
+            // Mappings mouvements de stock
             CreateMap<StockMovement, StockMovementResponseDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                 .ForMember(dest => dest.ProductBarcode, opt => opt.MapFrom(src => src.Product != null ? src.Product.Barcode : string.Empty))

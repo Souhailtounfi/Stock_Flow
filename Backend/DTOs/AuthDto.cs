@@ -7,7 +7,7 @@ namespace Backend.DTOs
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public int RoleId { get; set; } = 2; // Default to Employee
+        public int RoleId { get; set; } = 2; // Employé par défaut
     }
 
     public class LoginRequest

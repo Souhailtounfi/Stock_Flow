@@ -24,7 +24,7 @@ namespace Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure relationships and restrict delete behavior to prevent cascading deletions where undesirable
+            // Configuration des relations et restriction des suppressions en cascade
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany()
@@ -73,7 +73,7 @@ namespace Backend.Data
                 .HasForeignKey(sm => sm.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Precision for decimals
+            // Précision des décimales
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
@@ -89,7 +89,7 @@ namespace Backend.Data
 
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.TaxRate)
-                .HasPrecision(5, 4); // E.g., 0.2000
+                .HasPrecision(5, 4); // Par exemple : 0,2000
 
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.TaxAmount)
@@ -107,20 +107,20 @@ namespace Backend.Data
                 .Property(ii => ii.LineTotal)
                 .HasPrecision(18, 2);
 
-            // Seed Roles
+            // Seed des rôles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Name = "Admin" },
                 new Role { Id = 2, Name = "Employee" }
             );
 
-            // Seed Default Admin User
+            // Seed de l'administrateur par défaut
             var hasher = new PasswordHasher<object>();
             var adminUser = new User
             {
                 Id = 1,
                 Username = "admin",
                 Email = "admin@example.com",
-                RoleId = 1, // Admin
+                RoleId = 1, // Administrateur
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             };
             adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin123!");

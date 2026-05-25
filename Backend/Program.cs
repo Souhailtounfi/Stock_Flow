@@ -20,31 +20,31 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Connection String and DbContext Setup
+// 1. Configuration de la chaîne de connexion et du DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 31))));
 
-// 2. Repository Registrations
+// 2. Enregistrement des dépôts
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// 3. Service Registrations
+// 3. Enregistrement des services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
-// 4. AutoMapper Setup
+// 4. Configuration d'AutoMapper
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<Backend.Mappings.MappingProfile>());
 
-// 5. FluentValidation Setup
+// 5. Configuration de FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
-// 6. Controllers and JSON Serialization Setup
+// 6. Configuration des contrôleurs et de la sérialisation JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -52,7 +52,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
-// 7. Swagger Documentation Setup
+// 7. Configuration de Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -81,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// 8. CORS Configuration
+// 8. Configuration CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -92,7 +92,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 9. JWT Authentication Configuration
+// 9. Configuration de l'authentification JWT
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"] ?? "super_secret_key_that_is_long_enough_for_sha256_signing_123456");
 builder.Services.AddAuthentication(options =>
 {
@@ -118,7 +118,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// 10. Database Initialization (Auto-migration/creation & seeding)
+// 10. Initialisation de la base de données et du seed
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -129,11 +129,11 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error initializing database: {ex.Message}");
+        Console.WriteLine($"Erreur lors de l'initialisation de la base : {ex.Message}");
     }
 }
 
-// 11. Middleware Pipeline Setup
+// 11. Configuration du pipeline middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())

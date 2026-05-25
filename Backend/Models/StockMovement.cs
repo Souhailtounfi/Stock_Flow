@@ -10,7 +10,7 @@ namespace Backend.Models
         public Product Product { get; set; } = null!;
         
         public int Quantity { get; set; }
-        public string Type { get; set; } = string.Empty; // "IN", "OUT", "ADJUST"
+        public string Type { get; set; } = string.Empty; // "ENTREE", "SORTIE", "AJUSTEMENT"
         public string Reason { get; set; } = string.Empty;
         public DateTime Date { get; set; } = DateTime.UtcNow;
         
